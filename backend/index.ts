@@ -9,6 +9,7 @@ http.createServer(function(req, res) {
 
   var i = 0;
   var imgs = fs.readdirSync(__dirname + '/resources/')
+  console.log(imgs)
   var max_imgs = imgs.length
   var timer = setInterval(updateJPG, 1000);
 
