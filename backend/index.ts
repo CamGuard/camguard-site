@@ -8,12 +8,13 @@ http.createServer(function(req, res) {
   let mjpegReqHandler = mjpegServer.createReqHandler(req, res);
 
   var i = 0;
-  var max_imgs = fs.readdirSync(__dirname + '/resources/').length
+  var imgs = fs.readdirSync(__dirname + '/resources/')
+  var max_imgs = imgs.length
   var timer = setInterval(updateJPG, 1000);
 
   function updateJPG() {
     console.log(i)
-    fs.readFile(__dirname + '/resources/index ('+ i + ').jpg', sendJPGData);
+    fs.readFile(imgs[i], sendJPGData);
     i++;
   }
 
