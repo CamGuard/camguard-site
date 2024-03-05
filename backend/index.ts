@@ -1,35 +1,38 @@
-var http = require('http');
-var fs = require('fs');
-var mjpegServer = require('mjpeg-server');
+import * as express from 'express';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as sharp from 'sharp';
 
-http.createServer(function(req, res) {
-  console.log("Got request");
+const app = express();
+const port = 3000;
+const imageFolder = 'backend/resources';
 
-  let mjpegReqHandler = mjpegServer.createReqHandler(req, res);
+app.get('/mjpg', (req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'multipart/x-mixed-replace; boundary=frame',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Pragma': 'no-cache',
+  });
 
-  var i = 0;
-  var imgs = fs.readdirSync(__dirname + '/resources/').slice(1)
-  ////console.log(imgs)
-  var max_imgs = imgs.length
-  var timer = setInterval(updateJPG, 33);
+  const sendImage = async () => {
+    const files = fs.readdirSync(imageFolder).slice(1);
+    for (const file of files) {
+      const imagePath = path.join(imageFolder, file);
+      const imageBuffer = await sharp(imagePath).jpeg().toBuffer();
 
-  function updateJPG() {
-    console.log(i)
-    fs.readFile(__dirname + '/resources/' + imgs[i % max_imgs], sendJPGData);
-    i++;
-  }
-
-  function sendJPGData(err, data) {
-    mjpegReqHandler.write(data, function() {
-      checkIfFinished();
-    });
-  }
-
-  function checkIfFinished() {
-    if (false) {
-      clearInterval(timer);
-      mjpegReqHandler.close();
-      console.log('End Request');
+      res.write(`--frame\r\n`);
+      res.write(`Content-Type: image/jpeg\r\n`);
+      res.write(`Content-Length: ${imageBuffer.length}\r\n\r\n`);
+      res.write(imageBuffer);
+      res.write('\r\n');
     }
-  }
-}).listen(8081);
+    setTimeout(sendImage, 100);
+  };
+
+  sendImage();
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
