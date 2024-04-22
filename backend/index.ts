@@ -2,35 +2,47 @@ import * as express from "express";
 import * as fs from "fs";
 import * as path from "path";
 import * as sharp from "sharp";
+import * as net from 'net';
+
 
 const app = express();
 const port = 3000;
 const imageFolder = "backend/resources";
 
+const PORT = 65432;
+const HOST = '127.0.0.1';
+
 app.get("/mjpg", (req, res) => {
-    res.writeHead(200, {
-        "Content-Type": "multipart/x-mixed-replace; boundary=frame",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-        Pragma: "no-cache",
-    });
+  res.writeHead(200, {
+    "Content-Type": "multipart/x-mixed-replace; boundary=frame",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+    Pragma: "no-cache",
+  });
 
-    const sendImage = async () => {
-        const files = fs.readdirSync(imageFolder).slice(1);
-        for (const file of files) {
-            const imagePath = path.join(imageFolder, file);
-            const imageBuffer = await sharp(imagePath).jpeg().toBuffer();
+  const client = new net.Socket();
+  client.connect(PORT, HOST, () => {
+    console.log(`Connected to server: ${HOST}:${PORT}`);
+  });
 
-            res.write(`--frame\r\n`);
-            res.write(`Content-Type: image/jpeg\r\n`);
-            res.write(`Content-Length: ${imageBuffer.length}\r\n\r\n`);
-            res.write(imageBuffer);
-            res.write("\r\n");
-        }
-        setTimeout(sendImage, 100);
-    };
+  client.on('data', (imageBuffer) => {
+    console.log("Received the data");
+    res.write(`--frame\r\n`);
+    res.write(`Content-Type: image/jpeg\r\n`);
+    res.write(`Content-Length: ${imageBuffer.length}\r\n\r\n`);
+    res.write(imageBuffer);
+    res.write("\r\n");
+  });
 
-    sendImage();
+  client.on('close', () => {
+    console.log('Connection closed');
+    res.end();
+  });
+
+  client.on('error', (err) => {
+    console.error('Socket error:', err);
+    res.end();
+  });
 });
 
 app.listen(port, () => {
