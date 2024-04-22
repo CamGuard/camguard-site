@@ -16,8 +16,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
     i = 0
     while True:
-        print("backend/resources/" + IMGS[i % len(IMGS)])
-        data = open("backend/resources/" + IMGS[i % len(IMGS)], "rb").read()
-        conn.sendall(data)
-        sleep(1/30)
-        i += 1
+        try:
+            print("backend/resources/" + IMGS[i % len(IMGS)])
+            data = open("backend/resources/" + IMGS[i % len(IMGS)], "rb").read()
+            conn.sendall(data)
+            sleep(1/30)
+            i += 1
+        except Exception as e:
+            print(f"Quitting! {e}")
