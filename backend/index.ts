@@ -32,6 +32,7 @@ app.get("/mjpg", (req, res) => {
     res.write(`Content-Length: ${imageBuffer.length}\r\n\r\n`);
     res.write(imageBuffer);
     res.write("\r\n");
+    client.write("ACK")
   });
 
   client.on('close', () => {
