@@ -1,32 +1,25 @@
+import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { IoIosArrowBack, IoIosArrowForward, IoIosHome } from "react-icons/io";
 import { RiCameraLensFill } from "react-icons/ri";
-import { useRef } from "react";
-import { Video, ResizeMode } from "expo-av";
+import { WebView } from "react-native-webview";
 
 export default function App() {
     const { width, height } = Dimensions.get("window");
-    const videoRef = useRef(null);
-    const streamURL = "http://localhost:3000/mjpg";
+    const streamURL = "http://109.109.87.147/mjpg/video.mjpg";
 
     return (
         <View style={styles.container}>
             <StatusBar style="auto" />
-            <View style={[styles.header, { width: width }]}>
+            <View style={[styles.header, { width }]}>
                 <RiCameraLensFill style={styles.bigLogo} />
                 <Text style={styles.logo}>CamGuard</Text>
             </View>
             <View style={styles.camera}>
-                <Video
-                    ref={videoRef}
-                    source={{ uri: streamURL }}
-                    style={styles.video}
-                    resizeMode={ResizeMode.CONTAIN}
-                    useNativeControls={false}
-                />
+                <WebView source={{ uri: streamURL }} style={styles.video} />
             </View>
-            <View style={[styles.footer, { width: width }]}>
+            <View style={[styles.footer, { width }]}>
                 <IoIosArrowBack style={styles.icon} />
                 <IoIosHome style={styles.icon} />
                 <IoIosArrowForward style={styles.icon} />
@@ -88,8 +81,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     video: {
+        flex: 1,
         width: "100%",
         height: "100%",
-        alignSelf: "center"
     },
 });
