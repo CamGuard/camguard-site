@@ -15,12 +15,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     print(f"Connected by {addr}")
 
     i = 0
-    while True:
-        try:
-            print("backend/resources/" + IMGS[i % len(IMGS)])
-            data = open("backend/resources/" + IMGS[i % len(IMGS)], "rb").read()
-            conn.sendall(data)
-            sleep(1/30)
-            i += 1
-        except Exception as e:
-            print(f"Quitting! {e}")
+    try:
+        while True:
+                print("backend/resources/" + IMGS[i % len(IMGS)])
+                data = open("backend/resources/" + IMGS[i % len(IMGS)], "rb").read()
+                conn.sendall(data)
+                conn.recv(10)
+                sleep(1/30)
+                i += 1
+    except Exception as e:
+        print(f"Quitting! {e}")
