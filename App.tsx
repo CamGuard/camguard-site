@@ -1,6 +1,6 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 import { IoIosArrowBack, IoIosArrowForward, IoIosHome } from "react-icons/io";
 import { RiCameraLensFill } from "react-icons/ri";
 import { WebView } from "react-native-webview";
@@ -17,7 +17,7 @@ export default function App() {
                 <Text style={styles.logo}>CamGuard</Text>
             </View>
             <View style={styles.camera}>
-                <WebView source={{ uri: streamURL }} style={styles.video} />
+                <Image source={{ uri: streamURL }} style={styles.video} />
             </View>
             <View style={[styles.footer, { width }]}>
                 <IoIosArrowBack style={styles.icon} />
