@@ -3,7 +3,6 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 import { IoIosArrowBack, IoIosArrowForward, IoIosHome } from "react-icons/io";
 import { RiCameraLensFill } from "react-icons/ri";
-import { WebView } from "react-native-webview";
 
 export default function App() {
     const { width, height } = Dimensions.get("window");
